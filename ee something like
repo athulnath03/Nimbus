@@ -1,0 +1,6 @@
+[33meef5c45[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m removed mangum and added api/index.py
+[33md9991d8[m fix mangum version
+[33m3a966ad[m fix staticfiles for vercel
+[33m4b22909[m fix mangum handler
+[33m4c54ea9[m Initial commit
+[33m543b725[m Initial commit

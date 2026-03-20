@@ -5,7 +5,6 @@ from fastapi.middleware.cors import CORSMiddleware
 import httpx
 from datetime import datetime
 import os
-import magnum from Magnum
 
 app = FastAPI(title="Weather App")
 
@@ -118,5 +117,3 @@ async def download_weather(city: str = Query(...)):
         content=content,
         headers={"Content-Disposition": f"attachment; filename=weather_{city}.txt"}
     )
-
-handler = Mangum(app)
