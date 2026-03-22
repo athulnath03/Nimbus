@@ -1,5 +1,7 @@
 # Nimbus — Weather App (FastAPI)
 
+•> https://nimbuslive.vercel.app
+
 A weather web app built with FastAPI + vanilla HTML/CSS/JS.
 
 ## Features
