@@ -51,8 +51,8 @@ body::before {
 /* Header */
 header {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 48px;
 }
 
@@ -61,7 +61,6 @@ header {
     font-weight: 800;
     letter-spacing: -0.5px;
     color: var(--accent2);
-    text-align: center;
 }
 
 .logo span {
@@ -75,7 +74,6 @@ header {
     color: var(--muted);
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    text-align: center;
 }
 
 /* Search */
@@ -186,6 +184,7 @@ header {
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 28px;
+    text-align: left;
 }
 
 .city-name {
@@ -207,7 +206,6 @@ header {
     font-family: 'DM Mono', monospace;
     font-size: 11px;
     color: var(--muted);
-    text-align: right;
 }
 
 .city-info-wrapper {
@@ -226,6 +224,8 @@ header {
     align-items: center;
     gap: 20px;
     margin-bottom: 32px;
+    text-align: left;
+    flex-direction: row;
 }
 
 .weather-icon-large {
@@ -442,16 +442,72 @@ header {
     }
 }
 
+@media (max-width: 570px) {
+    header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .container {
+        padding: 32px 16px 60px;
+    }
+
+    .weather-card {
+        padding: 24px;
+    }
+
+    .main-weather {
+        flex-direction: row;
+        align-items: center;
+        text-align: center;
+        gap: 16px;
+    }
+
+    .city-name {
+        font-size: 24px;
+    }
+
+    .temp-big {
+        font-size: 52px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .stat-box {
+        padding: 14px;
+    }
+
+    .forecast-grid {
+        grid-template-columns: 1fr;
+    }
+
+    #orb-container {
+        width: 300px !important;
+        height: 300px !important;
+    }
+
+    #orb-container canvas {
+        width: 300px !important;
+        height: 300px !important;
+    }
+
+    .search-bar {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .search-btn {
+        padding: 14px;
+    }
+}
+
 
 
 /* ── Orb ── */
-#orb-container {
-    width: 500px;
-    height: 500px;
-    border-radius: 50%;
-    overflow: hidden;
-    position: relative;
-}
+
 
 .orb-wrap {
     display: flex;
@@ -459,6 +515,11 @@ header {
     align-items: center;
     margin: 24px 0;
     position: relative;
+}
+
+#orb-container {
+    width: 500px;
+    height: 500px;
 }
 
 /* Text overlay inside orb */
