@@ -13,16 +13,18 @@
 </head>
 
 <body>
-  <div class="container">
+  <main class="container">
     <header>
       <div class="logo">Nimbus<span>.</span></div>
       <div class="tagline">Real-time weather intelligence</div>
     </header>
 
-    <div class="error-msg" id="errorMsg"></div>
-    <div class="loading" id="loading">
-      <div class="spinner"></div>
-      <div class="loading-text">FETCHING WEATHER DATA...</div>
+    <div class="orb-wrap">
+      <div id="orb-container"></div>
+      <div class="orb-text" id="orbText">
+        <div class="orb-spinner" id="orbSpinner" style="display:none"></div>
+        <div class="orb-msg" id="orbMsg"></div>
+      </div>
     </div>
 
     <div class="weather-card" id="weatherCard">
@@ -48,27 +50,30 @@
       </div>
 
       <div class="stats-grid">
+
         <div class="stat-box">
           <div class="stat-label">Humidity</div>
           <div class="stat-value" id="humidity">—<span class="stat-unit"> %</span></div>
         </div>
+
         <div class="stat-box">
           <div class="stat-label">Wind Speed</div>
           <div class="stat-value" id="windSpeed">—<span class="stat-unit"> km/h</span></div>
         </div>
+
         <div class="stat-box">
           <div class="stat-label">Pressure</div>
           <div class="stat-value" id="pressure">—<span class="stat-unit"> hPa</span></div>
         </div>
+
         <div class="stat-box">
           <div class="stat-label">Visibility</div>
           <div class="stat-value" id="visibility">—<span class="stat-unit"> km</span></div>
         </div>
+
       </div>
 
-      <button class="download-btn" id="downloadBtn">
-        ↓ &nbsp;Download as .txt
-      </button>
+      <button class="download-btn" id="downloadBtn">↓ &nbsp;Download as .txt</button>
     </div>
 
     <div class="forecast-section" id="forecastSection">
@@ -80,7 +85,8 @@
       <input class="search-input" id="cityInput" type="text" placeholder="Enter city name..." autocomplete="off" />
       <button class="search-btn" onclick="fetchWeather()">Search</button>
     </div>
-  </div>
+
+  </main>
 
   <script src="/static/script.js"></script>
 </body>
