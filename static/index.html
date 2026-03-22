@@ -1,477 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Nimbus — Weather</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg: #060b14;
-      --surface: #0d1624;
-      --surface2: #111e30;
-      --border: rgba(99, 179, 237, 0.12);
-      --accent: #63b3ed;
-      --accent2: #90cdf4;
-      --text: #e8f4fd;
-      --muted: #6b8aaa;
-      --warm: #f6ad55;
-      --cool: #76e4f7;
-    }
-
-    html, body {
-      min-height: 100vh;
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Syne', sans-serif;
-      overflow-x: hidden;
-    }
-
-    /* Animated background */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(99,179,237,0.07) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(118,228,247,0.05) 0%, transparent 60%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .container {
-      position: relative;
-      z-index: 1;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 48px 24px 80px;
-    }
-
-    /* Header */
-    header {
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
-      margin-bottom: 48px;
-    }
-    .logo {
-      font-size: 28px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      color: var(--accent2);
-    }
-    .logo span { color: var(--muted); font-weight: 400; }
-    .tagline {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: var(--muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    /* Search */
-    .search-bar {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 48px;
-    }
-    .search-input {
-      flex: 1;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px 20px;
-      font-family: 'Syne', sans-serif;
-      font-size: 16px;
-      color: var(--text);
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .search-input::placeholder { color: var(--muted); }
-    .search-input:focus {
-      border-color: rgba(99,179,237,0.4);
-      box-shadow: 0 0 0 3px rgba(99,179,237,0.08);
-    }
-    .search-btn {
-      background: var(--accent);
-      color: #06101a;
-      border: none;
-      border-radius: 12px;
-      padding: 16px 28px;
-      font-family: 'Syne', sans-serif;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      letter-spacing: 0.02em;
-      transition: background 0.2s, transform 0.15s;
-    }
-    .search-btn:hover { background: var(--accent2); transform: translateY(-1px); }
-    .search-btn:active { transform: translateY(0); }
-
-    /* Error */
-    .error-msg {
-      background: rgba(252,129,74,0.1);
-      border: 1px solid rgba(252,129,74,0.3);
-      color: #fc814a;
-      border-radius: 10px;
-      padding: 14px 18px;
-      font-size: 14px;
-      margin-bottom: 24px;
-      display: none;
-    }
-
-    /* Main card */
-    .weather-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 36px;
-      margin-bottom: 20px;
-      display: none;
-      animation: fadeUp 0.4s ease;
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .city-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 28px;
-    }
-    .city-name {
-      font-size: 36px;
-      font-weight: 800;
-      letter-spacing: -1px;
-      line-height: 1;
-    }
-    .city-country {
-      font-family: 'DM Mono', monospace;
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 6px;
-      letter-spacing: 0.1em;
-    }
-    .city-datetime {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      color: var(--muted);
-      text-align: right;
-    }
-
-    .main-weather {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      margin-bottom: 32px;
-    }
-    .weather-icon-large {
-      width: 80px;
-      height: 80px;
-      filter: drop-shadow(0 0 16px rgba(99,179,237,0.4));
-    }
-    .temp-big {
-      font-size: 72px;
-      font-weight: 800;
-      letter-spacing: -3px;
-      line-height: 1;
-      color: var(--text);
-    }
-    .temp-unit { font-size: 28px; color: var(--muted); font-weight: 400; }
-    .weather-desc-main {
-      font-size: 16px;
-      color: var(--accent2);
-      margin-top: 4px;
-      font-weight: 500;
-    }
-    .feels-like {
-      font-family: 'DM Mono', monospace;
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    /* Stats grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-    }
-    .stat-box {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
-    }
-    .stat-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      color: var(--muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
-    .stat-value {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--text);
-    }
-    .stat-unit {
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 400;
-    }
-
-    /* Download button */
-    .download-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 20px;
-      color: var(--muted);
-      font-family: 'DM Mono', monospace;
-      font-size: 12px;
-      cursor: pointer;
-      margin-top: 24px;
-      transition: border-color 0.2s, color 0.2s;
-      letter-spacing: 0.05em;
-    }
-    .download-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-    /* Forecast */
-    .forecast-section {
-      display: none;
-      animation: fadeUp 0.4s ease 0.1s both;
-    }
-    .section-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 14px;
-    }
-    .forecast-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 12px;
-    }
-    .forecast-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 18px 12px;
-      text-align: center;
-      transition: border-color 0.2s, transform 0.2s;
-    }
-    .forecast-card:hover {
-      border-color: rgba(99,179,237,0.3);
-      transform: translateY(-3px);
-    }
-    .forecast-day {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      color: var(--muted);
-      letter-spacing: 0.08em;
-      margin-bottom: 10px;
-    }
-    .forecast-icon { width: 44px; height: 44px; margin: 0 auto 10px; display: block; }
-    .forecast-desc {
-      font-size: 11px;
-      color: var(--accent2);
-      margin-bottom: 10px;
-      line-height: 1.3;
-      min-height: 28px;
-    }
-    .forecast-temps {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-    }
-    .f-temp-high { font-size: 16px; font-weight: 700; }
-    .f-temp-low  { font-size: 14px; color: var(--muted); }
-
-    /* Loading */
-    .loading {
-      display: none;
-      text-align: center;
-      padding: 48px 0;
-    }
-    .spinner {
-      width: 36px; height: 36px;
-      border: 3px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      margin: 0 auto 12px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-text {
-      font-family: 'DM Mono', monospace;
-      font-size: 12px;
-      color: var(--muted);
-      letter-spacing: 0.1em;
-    }
-
-    @media (max-width: 600px) {
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .forecast-grid { grid-template-columns: repeat(2, 1fr); }
-      .temp-big { font-size: 52px; }
-      .city-name { font-size: 26px; }
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nimbus Weather</title>
+  <link rel="icon" href="https://img.icons8.com/fluency/96/wind.png" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
 </head>
+
 <body>
-<div class="container">
-  <header>
-    <div class="logo">Nimbus<span>.</span></div>
-    <div class="tagline">Real-time weather intelligence</div>
-  </header>
+  <div class="container">
+    <header>
+      <div class="logo">Nimbus<span>.</span></div>
+      <div class="tagline">Real-time weather intelligence</div>
+    </header>
 
-  <div class="search-bar">
-    <input class="search-input" id="cityInput" type="text" placeholder="Enter city name..." autocomplete="off"/>
-    <button class="search-btn" onclick="fetchWeather()">Search</button>
-  </div>
-
-  <div class="error-msg" id="errorMsg"></div>
-  <div class="loading" id="loading">
-    <div class="spinner"></div>
-    <div class="loading-text">FETCHING WEATHER DATA...</div>
-  </div>
-
-  <div class="weather-card" id="weatherCard">
-    <div class="city-row">
-      <div>
-        <div class="city-name" id="cityName">—</div>
-        <div class="city-country" id="cityCountry">—</div>
-      </div>
-      <div class="city-datetime" id="cityDatetime">—</div>
+    <div class="error-msg" id="errorMsg"></div>
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <div class="loading-text">FETCHING WEATHER DATA...</div>
     </div>
 
-    <div class="main-weather">
-      <img class="weather-icon-large" id="weatherIcon" src="" alt=""/>
-      <div>
-        <div class="temp-big" id="tempVal">—<span class="temp-unit">°C</span></div>
-        <div class="weather-desc-main" id="weatherDesc">—</div>
-        <div class="feels-like" id="feelsLike">Feels like —°C</div>
-      </div>
-    </div>
+    <div class="weather-card" id="weatherCard">
+      <div class="city-row">
 
-    <div class="stats-grid">
-      <div class="stat-box">
-        <div class="stat-label">Humidity</div>
-        <div class="stat-value" id="humidity">—<span class="stat-unit"> %</span></div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-label">Wind Speed</div>
-        <div class="stat-value" id="windSpeed">—<span class="stat-unit"> km/h</span></div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-label">Pressure</div>
-        <div class="stat-value" id="pressure">—<span class="stat-unit"> hPa</span></div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-label">Visibility</div>
-        <div class="stat-value" id="visibility">—<span class="stat-unit"> km</span></div>
-      </div>
-    </div>
-
-    <button class="download-btn" id="downloadBtn">
-      ↓ &nbsp;Download as .txt
-    </button>
-  </div>
-
-  <div class="forecast-section" id="forecastSection">
-    <div class="section-label">5 — Day Forecast</div>
-    <div class="forecast-grid" id="forecastGrid"></div>
-  </div>
-</div>
-
-<script>
-  let currentCity = '';
-
-  document.getElementById('cityInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') fetchWeather();
-  });
-
-  async function fetchWeather() {
-    const city = document.getElementById('cityInput').value.trim();
-    if (!city) return;
-    currentCity = city;
-
-    document.getElementById('errorMsg').style.display = 'none';
-    document.getElementById('weatherCard').style.display = 'none';
-    document.getElementById('forecastSection').style.display = 'none';
-    document.getElementById('loading').style.display = 'block';
-
-    try {
-      const res = await fetch(`/api/weather?city=${encodeURIComponent(city)}`);
-      const data = await res.json();
-
-      if (!res.ok) {
-        showError(data.detail || 'Something went wrong.');
-        return;
-      }
-
-      renderWeather(data);
-    } catch (e) {
-      showError('Could not connect to the server.');
-    } finally {
-      document.getElementById('loading').style.display = 'none';
-    }
-  }
-
-  function renderWeather(data) {
-    const c = data.current;
-    document.getElementById('cityName').textContent = data.city;
-    document.getElementById('cityCountry').textContent = data.country;
-    document.getElementById('cityDatetime').innerHTML = data.datetime.replace(' | ', '<br/>');
-    document.getElementById('weatherIcon').src = `https://openweathermap.org/img/wn/${c.icon}@2x.png`;
-    document.getElementById('tempVal').innerHTML = `${c.temp}<span class="temp-unit">°C</span>`;
-    document.getElementById('weatherDesc').textContent = c.description;
-    document.getElementById('feelsLike').textContent = `Feels like ${c.feels_like}°C`;
-    document.getElementById('humidity').innerHTML = `${c.humidity}<span class="stat-unit"> %</span>`;
-    document.getElementById('windSpeed').innerHTML = `${c.wind_speed}<span class="stat-unit"> km/h</span>`;
-    document.getElementById('pressure').innerHTML = `${c.pressure}<span class="stat-unit"> hPa</span>`;
-    document.getElementById('visibility').innerHTML = `${c.visibility}<span class="stat-unit"> km</span>`;
-
-    // Forecast
-    const grid = document.getElementById('forecastGrid');
-    grid.innerHTML = '';
-    data.forecast.forEach(day => {
-      grid.innerHTML += `
-        <div class="forecast-card">
-          <div class="forecast-day">${day.date}</div>
-          <img class="forecast-icon" src="https://openweathermap.org/img/wn/${day.icon}@2x.png" alt=""/>
-          <div class="forecast-desc">${day.description}</div>
-          <div class="forecast-temps">
-            <span class="f-temp-high">${day.temp_max}°</span>
-            <span class="f-temp-low">${day.temp_min}°</span>
+        <div class="city-info-wrapper">
+          <div class="city-name" id="cityName"></div>
+          <div class="city-meta">
+            <div class="city-country" id="cityCountry"></div>
+            <div class="city-datetime" id="cityDatetime"></div>
           </div>
-        </div>`;
-    });
+        </div>
 
-    document.getElementById('weatherCard').style.display = 'block';
-    document.getElementById('forecastSection').style.display = 'block';
+      </div>
 
-    document.getElementById('downloadBtn').onclick = () => {
-      window.location.href = `/api/download?city=${encodeURIComponent(currentCity)}`;
-    };
-  }
+      <div class="main-weather">
+        <img class="weather-icon-large" id="weatherIcon" src="" alt="" />
+        <div>
+          <div class="temp-big" id="tempVal">—<span class="temp-unit">°C</span></div>
+          <div class="weather-desc-main" id="weatherDesc">—</div>
+          <div class="feels-like" id="feelsLike">Feels like —°C</div>
+        </div>
+      </div>
 
-  function showError(msg) {
-    const el = document.getElementById('errorMsg');
-    el.textContent = '⚠ ' + msg;
-    el.style.display = 'block';
-  }
-</script>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-label">Humidity</div>
+          <div class="stat-value" id="humidity">—<span class="stat-unit"> %</span></div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Wind Speed</div>
+          <div class="stat-value" id="windSpeed">—<span class="stat-unit"> km/h</span></div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Pressure</div>
+          <div class="stat-value" id="pressure">—<span class="stat-unit"> hPa</span></div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Visibility</div>
+          <div class="stat-value" id="visibility">—<span class="stat-unit"> km</span></div>
+        </div>
+      </div>
+
+      <button class="download-btn" id="downloadBtn">
+        ↓ &nbsp;Download as .txt
+      </button>
+    </div>
+
+    <div class="forecast-section" id="forecastSection">
+      <div class="section-label">5 — Day Forecast</div>
+      <div class="forecast-grid" id="forecastGrid"></div>
+    </div>
+
+    <div class="search-bar">
+      <input class="search-input" id="cityInput" type="text" placeholder="Enter city name..." autocomplete="off" />
+      <button class="search-btn" onclick="fetchWeather()">Search</button>
+    </div>
+  </div>
+
+  <script src="/static/script.js"></script>
 </body>
+
 </html>
