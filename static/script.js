@@ -307,7 +307,10 @@ function renderWeather(data) {
         // Populate weather data
         document.getElementById('cityName').textContent = data.city;
         document.getElementById('cityCountry').textContent = data.country;
-        document.getElementById('cityDatetime').innerHTML = data.datetime.replace(' | ', '<br/>');
+        const now = new Date();
+const dateStr = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+document.getElementById('cityDatetime').innerHTML = `${dateStr}<br/>${timeStr.toUpperCase()}`;
         document.getElementById('weatherIcon').src = `https://openweathermap.org/img/wn/${c.icon}@2x.png`;
         document.getElementById('tempVal').innerHTML = `${c.temp}<span class="temp-unit">°C</span>`;
         document.getElementById('weatherDesc').textContent = c.description;
