@@ -67,7 +67,6 @@ async def get_weather(city: str = Query(..., description="City name")):
     return {
         "city": current["name"],
         "country": current["sys"]["country"],
-        "datetime": datetime.now().strftime("%d %b %Y | %I:%M %p"),
         "current": {
             "temp": round(current["main"]["temp"]),
             "feels_like": round(current["main"]["feels_like"]),
